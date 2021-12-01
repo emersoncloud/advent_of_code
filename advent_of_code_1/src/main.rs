@@ -4,6 +4,7 @@ use std::io::{prelude::*, BufReader};
 fn main() {
     let file = File::open("./input.txt").unwrap();
     let reader = BufReader::new(file);
+    // for kyle to show me how vscode works
 
     let mut depths: Vec<u32> = Vec::new();
 
