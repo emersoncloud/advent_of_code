@@ -36,6 +36,49 @@ fn main() {
     let dfs_ans = local_mins_dfs.iter().fold(0, |acc, val| acc + val + 1);
     println!("dfs danger: {}", dfs_ans);
     println!("dfs duration: {:?}", dfs_duration);
+
+    start = Instant::now();
+    visited = [[false; GRID_SIZE]; GRID_SIZE];
+    let basin_count = count_basins(&grid, &mut visited);
+    let basin_duration = start.elapsed();
+    println!("count basins: {}", basin_count);
+    println!("basin duration: {:?}", basin_duration);
+}
+
+fn count_basins(grid: &[[i32; GRID_SIZE]; GRID_SIZE], visited: &mut [[bool; GRID_SIZE]; GRID_SIZE]) -> i32 {
+    let mut basins: Vec<i32> = Vec::new();
+    for i in 0..grid.len() {
+        for j in 0..grid[i].len() {
+            if !visited[i][j] && grid[i][j] != 9 {
+                basins.push(basin_dfs(i as i32, j as i32, grid, visited));
+            }
+        }
+    }
+    basins.sort_unstable_by(|a, b| b.partial_cmp(a).unwrap());
+    let mut sum = 1;
+    basins.iter().fold(0, |acc, basin| {
+        if acc < 3 {
+            sum *= basin
+        }
+        acc + 1
+    });
+    sum
+}
+
+fn basin_dfs(i: i32, j: i32, grid: &[[i32; GRID_SIZE]; GRID_SIZE], visited: &mut [[bool; GRID_SIZE]; GRID_SIZE]) -> i32 {
+    if !is_valid_coords(i, j, visited) {
+        return 0;
+    }
+    visited[i as usize][j as usize] = true;
+    if grid[i as usize][j as usize] == 9 {
+        return 0;
+    }
+    return 1 +
+        basin_dfs(i+1, j, grid, visited) +
+        basin_dfs(i-1, j, grid, visited) +
+        basin_dfs(i, j-1, grid, visited) +
+        basin_dfs(i, j+1, grid, visited);
+
 }
 
 fn linear(grid: &[[i32; GRID_SIZE]; GRID_SIZE]) -> Vec<i32> {
