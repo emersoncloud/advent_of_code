@@ -71,21 +71,15 @@ fn dfs(string: &str, the_graph: &Graph, cache: &mut HashMap<String, i32>) -> i32
         return 1;
     }
 
-    let mut theres_a_two: bool = false;
-    let mut do_traverse: bool = false;
-    for x in cache.values() {
-        if *x > 1 {
-            theres_a_two = true;
-        }
-    }
+    let mut cache_it: bool = false;
 
     if !cache.contains_key(string) {
-        do_traverse =  true;
+        cache_it =  true;
     } else {
-        do_traverse = cache.contains_key(string) && !theres_a_two;
+        cache_it = cache.contains_key(string) && !cache.values().find(|x| **x == 2).is_some();
     }
 
-    if !do_traverse {
+    if !cache_it {
         return 0;
     } else if string.chars().all(char::is_lowercase) {
         if let Some(val) = cache.get(string) {
@@ -111,33 +105,4 @@ fn dfs(string: &str, the_graph: &Graph, cache: &mut HashMap<String, i32>) -> i32
         }
     }
     sum
-}
-
-fn check_cache(string: &str, cache: &HashMap<String, i32>) -> bool {
-    let mut theres_a_two: bool = false;
-    for x in cache.values() {
-        if *x > 1 {
-            theres_a_two = true;
-        }
-    }
-
-    if !cache.contains_key(string) {
-        return true;
-    } else if cache.contains_key(string) && theres_a_two == false {
-        return true;
-    } else {
-        return false
-    }
-
-    // if let Some(value) = cache.get(string) {
-    //     if *value == 0 {
-    //         return true;
-    //     }
-    // }
-    //
-    //
-    // if !cache.contains_key(string) {
-    //     return true;
-    // }
-    // cache.contains_key(string) && !theres_a_two
 }
