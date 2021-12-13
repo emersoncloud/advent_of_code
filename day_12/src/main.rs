@@ -22,12 +22,10 @@ impl Graph {
             self.graph.insert(b.clone(), Vec::new());
         }
 
-        if a == "start" {
+        if a == "start" || b == "end" {
             self.graph.get_mut(&a).unwrap().push(b.clone());
         } else if b == "start" || a == "end" {
             self.graph.get_mut(&b).unwrap().push(a.clone());
-        } else if b == "end" {
-            self.graph.get_mut(&a).unwrap().push(b.clone());
         } else {
             self.graph.get_mut(&a).unwrap().push(b.clone());
             self.graph.get_mut(&b).unwrap().push(a.clone());
