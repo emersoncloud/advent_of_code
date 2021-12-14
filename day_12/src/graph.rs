@@ -1,14 +1,23 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs::File;
 use std::io::{prelude::*, BufReader};
 
+#[derive(Debug)]
 pub struct Graph {
-    graph: HashMap<String, Vec<String>>,
+    pub graph: HashMap<String, Vec<String>>,
 }
 
 impl Default for Graph {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl PartialEq for Graph {
+    fn eq(&self, other: &Self) -> bool {
+        self.graph.keys().collect::<HashSet<&String>>() == other.graph.keys().collect::<HashSet<&String>>()
+        && self.graph.values().flatten().into_iter().map(|s| s.as_str()).collect::<HashSet<&str>>() ==
+            other.graph.values().flatten().into_iter().map(|s| s.as_str()).collect::<HashSet<&str>>()
     }
 }
 
@@ -66,17 +75,19 @@ impl Graph {
             return 1;
         }
 
-        let cache_it: bool = if !cache.contains_key(string) {
+        let cached_maybe: Option<&i32> = cache.get(string);
+
+        let cache_it: bool = if cached_maybe.is_none() {
             true
         } else {
-            cache.contains_key(string) && !cache.values().any(|x| *x == 2)
+            cached_maybe.is_some() && !cache.values().any(|x| *x == 2)
         };
 
         if !cache_it {
             return 0;
         } else if string.chars().all(char::is_lowercase) {
-            if let Some(val) = cache.get(string) {
-                cache.insert(String::from(string), val + 1);
+            if cached_maybe.is_some() {
+                cache.insert(String::from(string), cached_maybe.unwrap().clone() + 1);
             } else {
                 cache.insert(String::from(string), 1);
             }
@@ -86,6 +97,14 @@ impl Graph {
         self.graph.get(string).unwrap().iter().for_each(|node| {
             sum += self.dfs(node, cache);
         });
+
+        // if cached_maybe.is_some() {
+        //     if *cached_maybe.unwrap() == 2 {
+        //         cache.insert(String::from(string), cached_maybe.unwrap().clone() - 1);
+        //     }
+        // } else {
+        //     cache.remove_entry(string);
+        // }
 
         if let Some(removed_val) = cache.remove_entry(string) {
             if removed_val.1 == 2 {

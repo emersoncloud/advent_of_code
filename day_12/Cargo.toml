@@ -6,7 +6,15 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+smallstring = "0.1.2"
 
 [lib]
 name = "my_graph"
 path = "src/lib.rs"
+
+[profile.release]
+debug = true
+lto = false
+
+[profile.bench]
+debug = true
