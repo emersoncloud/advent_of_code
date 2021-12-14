@@ -1,10 +1,11 @@
 use std::collections::{HashMap, HashSet};
 use std::fs::File;
 use std::io::{prelude::*, BufReader};
+use smallstring::SmallString;
 
 #[derive(Debug)]
 pub struct Graph {
-    pub graph: HashMap<String, Vec<String>>,
+    pub graph: HashMap<SmallString, Vec<SmallString>>,
 }
 
 impl Default for Graph {
@@ -15,9 +16,9 @@ impl Default for Graph {
 
 impl PartialEq for Graph {
     fn eq(&self, other: &Self) -> bool {
-        self.graph.keys().collect::<HashSet<&String>>() == other.graph.keys().collect::<HashSet<&String>>()
-        && self.graph.values().flatten().into_iter().map(|s| s.as_str()).collect::<HashSet<&str>>() ==
-            other.graph.values().flatten().into_iter().map(|s| s.as_str()).collect::<HashSet<&str>>()
+        self.graph.keys().collect::<HashSet<&SmallString>>() == other.graph.keys().collect::<HashSet<&SmallString>>()
+        && self.graph.values().flatten().into_iter().map(|s| s.as_ref()).collect::<HashSet<&str>>() ==
+            other.graph.values().flatten().into_iter().map(|s| s.as_ref()).collect::<HashSet<&str>>()
     }
 }
 
@@ -34,15 +35,15 @@ impl Graph {
         for line in reader.lines().flatten() {
             let start_and_end: Vec<&str> = line.split('-').collect();
 
-            let a: String = String::from(start_and_end[0]);
-            let b: String = String::from(start_and_end[1]);
+            let a: SmallString = SmallString::from(start_and_end[0]);
+            let b: SmallString = SmallString::from(start_and_end[1]);
 
             graph.add_connection(a, b);
         }
         graph
     }
 
-    pub fn add_connection(&mut self, a: String, b: String) {
+    pub fn add_connection(&mut self, a: SmallString, b: SmallString) {
         if !self.graph.contains_key(&a) {
             self.graph.insert(a.clone(), Vec::new());
         }
@@ -51,9 +52,9 @@ impl Graph {
             self.graph.insert(b.clone(), Vec::new());
         }
 
-        if a == "start" || b == "end" {
+        if a.eq_ignore_ascii_case("start") || b.eq_ignore_ascii_case("end") {
             self.graph.get_mut(&a).unwrap().push(b.clone());
-        } else if b == "start" || a == "end" {
+        } else if b.eq_ignore_ascii_case("start") || a.eq_ignore_ascii_case("end") {
             self.graph.get_mut(&b).unwrap().push(a.clone());
         } else {
             self.graph.get_mut(&a).unwrap().push(b.clone());
@@ -63,14 +64,14 @@ impl Graph {
 
     pub fn explore_caves(&self) -> i32 {
         let mut sum = 0;
-        let mut cache: HashMap<String, i32> = HashMap::new();
+        let mut cache: HashMap<SmallString, i32> = HashMap::new();
         self.graph.get("start").unwrap().iter().for_each(|node| {
             sum += self.dfs(node, &mut cache);
         });
         sum
     }
 
-    pub fn dfs(&self, string: &str, cache: &mut HashMap<String, i32>) -> i32 {
+    pub fn dfs(&self, string: &str, cache: &mut HashMap<SmallString, i32>) -> i32 {
         if string == "end" {
             return 1;
         }
@@ -87,9 +88,9 @@ impl Graph {
             return 0;
         } else if string.chars().all(char::is_lowercase) {
             if cached_maybe.is_some() {
-                cache.insert(String::from(string), cached_maybe.unwrap().clone() + 1);
+                cache.insert(SmallString::from(string), cached_maybe.unwrap().clone() + 1);
             } else {
-                cache.insert(String::from(string), 1);
+                cache.insert(SmallString::from(string), 1);
             }
         }
 
@@ -98,17 +99,9 @@ impl Graph {
             sum += self.dfs(node, cache);
         });
 
-        // if cached_maybe.is_some() {
-        //     if *cached_maybe.unwrap() == 2 {
-        //         cache.insert(String::from(string), cached_maybe.unwrap().clone() - 1);
-        //     }
-        // } else {
-        //     cache.remove_entry(string);
-        // }
-
         if let Some(removed_val) = cache.remove_entry(string) {
             if removed_val.1 == 2 {
-                cache.insert(String::from(string), removed_val.1 - 1);
+                cache.insert(SmallString::from(string), removed_val.1 - 1);
             }
         }
         sum

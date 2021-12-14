@@ -2,6 +2,7 @@
 
 extern crate test;
 pub use graph::Graph;
+use smallstring::SmallString;
 
 mod graph;
 
@@ -21,13 +22,13 @@ mod tests {
     use graph::Graph;
 
     fn create_graph() -> Graph {
-        let hash_map: HashMap<String, Vec<String>> = HashMap::from([
-            (String::from("start"), vec![String::from("A"), String::from("b")]),
-            (String::from("A"), vec![String::from("c"), String::from("b"), String::from("end")]),
-            (String::from("b"), vec![String::from("d"), String::from("A"), String::from("end")]),
-            (String::from("c"), vec![String::from("A")]),
-            (String::from("d"), vec![String::from("b")]),
-            (String::from("end"), vec![]),
+        let hash_map: HashMap<SmallString, Vec<SmallString>> = HashMap::from([
+            (SmallString::from("start"), vec![SmallString::from("A"), SmallString::from("b")]),
+            (SmallString::from("A"), vec![SmallString::from("c"), SmallString::from("b"), SmallString::from("end")]),
+            (SmallString::from("b"), vec![SmallString::from("d"), SmallString::from("A"), SmallString::from("end")]),
+            (SmallString::from("c"), vec![SmallString::from("A")]),
+            (SmallString::from("d"), vec![SmallString::from("b")]),
+            (SmallString::from("end"), vec![]),
 
         ]);
         Graph {

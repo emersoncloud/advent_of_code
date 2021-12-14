@@ -12,9 +12,5 @@ smallstring = "0.1.2"
 name = "my_graph"
 path = "src/lib.rs"
 
-[profile.release]
-debug = true
-lto = false
-
 [profile.bench]
 debug = true
