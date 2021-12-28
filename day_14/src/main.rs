@@ -24,54 +24,47 @@ fn main() {
         );
     }
 
-    part_one(&mut input_string, map.clone(), 10);
-    part_two(&mut input_string, &map.clone(), 40);
+    part_one(input_string.as_str(), map.clone(), 10);
+    part_two(input_string.as_str(), &map.clone(), 2);
 }
 
-fn part_two(pass_in_string: &String, map: &HashMap<String, String>, iters: i32) {
-    let mut input_string: String = pass_in_string.clone();
+fn part_two(pass_in_string: &str, map: &HashMap<String, String>, iters: i32) {
+    let input_string: String = pass_in_string.to_string();
     let timer = Instant::now();
     let mut output: HashMap<String, i64> = HashMap::new();
     let mut input: HashMap<String, i64> = HashMap::new();
 
     for i in 0..(input_string.len() - 1) {
         let pair = &input_string[i..i+2];
-        let current_val = input.get(pair);
-        if current_val.is_some() {
-            input.insert(String::from(pair), current_val.unwrap() + 1);
+        if let Some(current_val) = input.get(pair) {
+            input.insert(String::from(pair), current_val + 1);
         } else {
             input.insert(String::from(pair), 1);
         }
     }
 
-    for i in 0..iters {
+    for _i in 0..iters {
         output.clear();
         input.iter().for_each(|pair| {
             let new_strigns = get_strings(pair.0,  map);
             for new in new_strigns {
-                let current_val = output.get(new.as_str());
-                if current_val.is_some() {
-                    output.insert(new, current_val.unwrap() + *pair.1);
+                if let Some(current_val) = output.get(new.as_str()) {
+                    output.insert(new, current_val + *pair.1);
                 } else {
                     output.insert(new, *pair.1);
                 }
             }
-
-
         });
         input = output.clone();
     }
 
-
     let mut count_chars: HashMap<char, i64> = HashMap::new();
     output.iter().for_each(|o| {
         for c in o.0.as_bytes() {
-            let charmander = *c as char;
-            let count = count_chars.get(&(*c as char));
-            if count.is_none() {
-                count_chars.insert(*c as char, *o.1);
+            if let Some(count)  = count_chars.get(&(*c as char)) {
+                count_chars.insert(*c as char, count + *o.1);
             } else {
-                count_chars.insert(*c as char, count.unwrap() + *o.1);
+                count_chars.insert(*c as char, *o.1);
             }
         }
     });
@@ -88,11 +81,10 @@ fn part_two(pass_in_string: &String, map: &HashMap<String, String>, iters: i32) 
         }
     }
 
-    println!("timer: {:?}", timer.elapsed());
-    print_output(real_const_chars);
+    print_output(real_const_chars, timer);
 }
 
-fn print_output(map: HashMap<char, i64>) {
+fn print_output(map: HashMap<char, i64>, timer: Instant) {
     let mut biggest: i64 = i64::MIN;
     let mut smallest: i64 = i64::MAX;
     for (_, value) in map.iter() {
@@ -103,12 +95,12 @@ fn print_output(map: HashMap<char, i64>) {
             smallest = *value;
         }
     }
-    println!("{:?}", map);
+    println!("character counts: {:?}", map);
     println!("difference: big, small, diff {}, {}, {}", biggest, smallest, biggest - smallest);
-
+    println!("timer: {:?}", timer.elapsed());
 }
 
-fn get_strings(pair: &String, map: &HashMap<String, String>) -> Vec<String> {
+fn get_strings(pair: &str, map: &HashMap<String, String>) -> Vec<String> {
     let mut string_one = String::new();
 
     string_one.push_str(pair[0..1].to_string().as_str());
@@ -120,39 +112,35 @@ fn get_strings(pair: &String, map: &HashMap<String, String>) -> Vec<String> {
     return vec![string_one, string_two];
 }
 
-fn part_one(pass_in_string: &String, map: HashMap<String, String>, iters: i32) {
-    let mut input_string = pass_in_string.clone();
+fn part_one(pass_in_string: &str, map: HashMap<String, String>, iters: i32) {
+    let mut input_string = pass_in_string.to_string();
     let timer = Instant::now();
     let mut output_string: String = String::new();
-    for i in 0..iters {
+    for _i in 0..iters {
         output_string.clear();
         for i in 0..(input_string.len() - 1) {
             let input = &input_string[i..i+2];
             if i == 0 {
                 output_string.push_str(&input_string[i..i+1]);
             }
-            if let val = map.get(&input_string[i..i+2]).unwrap() {
+            if let Some(val) = map.get(&input_string[i..i+2]) {
                 output_string.push_str(val);
             }
 
             output_string.push_str(&input_string[i+1..i+2]);
         }
-        println!("iter: {}, string_len: {}", i, output_string.len());
         input_string = output_string.clone();
     }
 
     let mut count_chars: HashMap<char, i64> = HashMap::new();
     output_string.as_bytes().iter().for_each( |c| {
-
-        let count = count_chars.get(&(*c as char));
-        if count.is_none() {
-            count_chars.insert(*c as char, 1);
+        if let Some(count) = count_chars.get( &(*c as char)) {
+            count_chars.insert(*c as char, count + 1);
         } else {
-            count_chars.insert(*c as char, count.unwrap() + 1);
+            count_chars.insert(*c as char, 1);
         }
     });
 
-    println!("timer: {:?}", timer.elapsed());
-    print_output(count_chars);
+    print_output(count_chars, timer);
 }
 

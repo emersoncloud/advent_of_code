@@ -2,6 +2,7 @@ use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::fs::File;
 use std::io::{prelude::*, BufReader};
+use std::time::{Instant, Duration};
 
 struct Display {
     input: Vec<HashSet<char>>,
@@ -94,6 +95,7 @@ fn main() {
         displays.push(d);
     }
 
+    let timer = Instant::now();
     let mut count_unique_digis = 0;
     for display in &displays {
         for s in &display.output {
@@ -243,6 +245,7 @@ fn main() {
         big_acc += scc_string.parse::<i32>().unwrap();
         scc_string = String::from("");
     }
+    println!("Duration{:?}", timer.elapsed());
     println!("unique digis: {}", count_unique_digis);
     println!("acc: {:?}", big_acc);
 }

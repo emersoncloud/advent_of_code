@@ -1,0 +1,49 @@
+            if c.x1 < c.x2 && c.y1 < c.y2 {
+                let mut i = c.x1;
+                let mut j = c.y1;
+                while i <= c.x2 && j <= c.y2 {
+                    matrix[j as usize][i as usize] += 1;
+                    if i <= c.x2 {
+                        i += 1
+                    }
+                    if j <= c.y2 {
+                        j += 1
+                    }
+                }
+            } else if c.x1 > c.x2 && c.y1 > c.y2 {
+                let mut i = c.x2;
+                let mut j = c.y2;
+                while i <= c.x1 && j <= c.y1 {
+                    matrix[j as usize][i as usize] += 1;
+                    if i <= c.x1 {
+                        i += 1
+                    }
+                    if j <= c.y1 {
+                        j += 1
+                    }
+                }
+            } else if c.x1 > c.x2 && c.y1 < c.y2 {
+                let mut i = c.x2;
+                let mut j = c.y1;
+                while i <= c.x1 && j <= c.y2 {
+                    matrix[j as usize][i as usize] += 1;
+                    if i <= c.x1 {
+                        i += 1
+                    }
+                    if j <= c.y2 {
+                        j += 1
+                    }
+                }
+            } else if c.x1 < c.x2 && c.y1 > c.y2 {
+                let mut i = c.x1;
+                let mut j = c.y2;
+                while i <= c.x2 && j <= c.y1 {
+                    matrix[j as usize][i as usize] += 1;
+                    if i <= c.x2 {
+                        i += 1
+                    }
+                    if j <= c.y1 {
+                        j += 1
+                    }
+                }
+            }
