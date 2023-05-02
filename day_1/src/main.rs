@@ -25,7 +25,7 @@ fn part_one() {
         prev = *depth;
     }
 
-    println!("depths: {}", depth_increases);
+    println!("depths lol: {}", depth_increases);
 }
 
 fn part_two() {
@@ -43,15 +43,14 @@ fn part_two() {
     let mut rolling_one: u32 = depths[2] + depths[1] + depths[0];
     let mut rolling_two: u32;
     for i in 2..depths.len() {
-        rolling_two = depths[i] + depths[i-1] + depths[i-2];
+        rolling_two = depths[i] + depths[i - 1] + depths[i - 2];
         if rolling_two > rolling_one {
-            rolling_depths +=1;
+            rolling_depths += 1;
         }
         rolling_one = rolling_two;
     }
 
     println!("rolling depths: {}", rolling_depths);
-
 }
 
 fn open_file(filename: &str) -> BufReader<File> {
